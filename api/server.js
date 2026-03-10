@@ -4,8 +4,8 @@ const app = express();
 
 app.use(express.json());
 
-// INI KUNCI FIX-NYA: Jalurnya disamakan persis dengan URL Vercel
-app.post("/api/server/curhat", async (req, res) => {
+// JALUR FINAL: Sesuai dengan nama file (api/server.js)
+app.post("/api/server", async (req, res) => {
   try {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(400).json({ error: "API KEY BLM DIPASANG DI VERCEL" });
@@ -37,9 +37,9 @@ app.post("/api/server/curhat", async (req, res) => {
   }
 });
 
-// Pintu tamu buat ngetes di Chrome
-app.get("/api/server/curhat", (req, res) => {
-  res.send("Jalur Vercel sudah SINKRON dan server AKTIF!");
+// Pintu tamu buat cek kesehatan di Chrome
+app.get("/api/server", (req, res) => {
+  res.send("Jalur Vercel BERHASIL SINKRON! Gunakan URL ini di Roblox.");
 });
 
 module.exports = app;
