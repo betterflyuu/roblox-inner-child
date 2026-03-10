@@ -2,9 +2,9 @@
   "name": "roblox-inner-child",
   "version": "1.0.0",
   "description": "Jembatan AI buat Roblox",
-  "main": "server.js",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.0",
