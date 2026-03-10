@@ -12,7 +12,7 @@ app.post("/curhat", async (req, res) => {
     const { pesan, gender, nama } = req.body;
 
     // Memakai model Pro agar penalaran emosionalnya kuat
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Instruksi agar AI menjadi "dirimu yang kecil"
     const systemPrompt = `Kamu adalah versi kecil dari ${nama} (usia 7-9 tahun). 
