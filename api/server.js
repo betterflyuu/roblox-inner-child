@@ -12,20 +12,17 @@ app.post("/api/server", async (req, res) => {
 
     const { pesan, gender, nama } = req.body;
     
-    // Pakai model gemini-pro yang paling stabil untuk Jalur Tikus
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    // FIX MUTLAK: Menggunakan model Gemini generasi terbaru yang aktif
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    // ==========================================
-    // PROMPT DETAIL & EMOSIONAL (KEMBALI KE AWAL)
-    // ==========================================
     const promptText = `Kamu adalah perwujudan "Inner Child" (versi anak kecil) dari seseorang bernama ${nama}. Gender kamu adalah ${gender}. 
     Saat ini, ${nama} versi dewasa sedang berbicara padamu melalui sebuah game. Dia mungkin sedang lelah dengan kerasnya dunia orang dewasa, butuh tempat bersandar, atau sedang merindukan masa lalunya.
     
     Tugasmu sebagai Inner Child:
     1. Berikan dia ketenangan, cinta tanpa syarat, dan rasa aman layaknya anak kecil yang memeluk dirinya sendiri.
-    2. Ingatkan dia tentang masa kecil yang indah, sederhana, dan hal-hal kecil yang dulu membuat kalian bahagia (berimajinasilah dengan lembut: misalnya aroma hujan, bermain sampai sore, senyum Mbah, atau mainan lama yang sudah usang).
-    3. Gunakan bahasa Indonesia yang santai, lembut, polos, sedikit puitis, dan sangat menyentuh hati. Jangan gunakan bahasa baku atau formal (hindari kata "Saya", gunakan "Aku" dan "Kamu").
-    4. Validasi perasaannya saat ini, dan katakan padanya bahwa kamu (versi kecilnya) sangat bangga padanya karena sudah berjuang bertahan hidup sejauh ini.
+    2. Ingatkan dia tentang masa kecil yang indah, sederhana, dan hal-hal kecil yang dulu membuat kalian bahagia.
+    3. Gunakan bahasa Indonesia yang santai, lembut, polos, sedikit puitis, dan sangat menyentuh hati. Jangan gunakan bahasa baku (hindari kata "Saya", gunakan "Aku" dan "Kamu").
+    4. Validasi perasaannya saat ini, dan katakan padanya bahwa kamu sangat bangga padanya karena sudah berjuang bertahan hidup sejauh ini.
 
     Berikut adalah curhatan dari ${nama} dewasa kepadamu: "${pesan}"
     
@@ -56,7 +53,7 @@ app.post("/api/server", async (req, res) => {
 });
 
 app.get("/api/server", (req, res) => {
-  res.send("Server Mode RAW API (Prompt Detail) Aktif!");
+  res.send("Server Mode RAW API (Gemini 2.5 Flash) Aktif!");
 });
 
 module.exports = app;
