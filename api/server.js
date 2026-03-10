@@ -12,7 +12,7 @@ app.post("/api/server", async (req, res) => {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+   const model = genAI.getGenerativeModel({ model: "Gemini 3 Flash" });
     const { pesan, gender, nama } = req.body;
 
     const systemPrompt = `Kamu adalah versi kecil dari ${nama}. Gender kamu ${gender}. 
