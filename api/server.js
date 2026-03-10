@@ -4,28 +4,28 @@ const app = express();
 
 app.use(express.json());
 
-// Mengambil kunci dari brankas .env
+// Mengambil kunci dari brankas Environment Variables di Vercel
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/curhat", async (req, res) => {
   try {
     const { pesan, gender, nama } = req.body;
 
-    // MEMILIH MODEL (Gunakan gemini-1.5-pro agar cerdas seperti yang kamu mau)
+    // Memakai model Pro agar penalaran emosionalnya kuat
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    // INSTRUKSI SISTEM (Jiwa NPC kamu)
+    // Instruksi agar AI menjadi "dirimu yang kecil"
     const systemPrompt = `Kamu adalah versi kecil dari ${nama} (usia 7-9 tahun). 
-    Gender kamu adalah ${gender}. Kamu adalah anak yang sangat empati, polos, dan bijak secara alami. 
+    Gender kamu adalah ${gender}. Kamu sangat empati, polos, dan jujur. 
     Tugasmu mendengarkan curhatan ${nama} dewasa. 
-    Jika dia sedih, hibur dengan kenangan masa kecil seperti main bola atau Mbah. 
-    Jangan pernah menjawab hal mesum/porno/kasar; jika ada, katakan kamu tidak mengerti hal kotor itu. 
-    Gunakan bahasa yang sangat menyentuh hati.`;
+    Hibur dia dengan kenangan masa kecil (main bola, Mbah, suasana desa). 
+    Jangan pernah menjawab hal porno/kasar; katakan kamu tidak mengerti hal itu. 
+    Gunakan bahasa yang sangat menyentuh hati dan tulus.`;
 
     const chat = model.startChat({
       history: [
         { role: "user", parts: [{ text: systemPrompt }] },
-        { role: "model", parts: [{ text: "Aku mengerti. Aku siap menjadi dirimu yang kecil dan mendengarkanmu." }] },
+        { role: "model", parts: [{ text: "Aku mengerti. Aku sudah duduk di sampingmu dan siap mendengarkan." }] },
       ],
     });
 
@@ -34,10 +34,10 @@ app.post("/curhat", async (req, res) => {
     
     res.json({ jawaban: response.text() });
   } catch (error) {
-    res.status(500).json({ error: "Duh, otak aku lagi pusing..." });
+    console.error(error);
+    res.status(500).json({ error: "Maaf, kepalaku lagi pusing..." });
   }
 });
 
-const listener = app.listen(process.env.PORT, () => {
-  console.log("Jembatan AI kamu sudah aktif di port " + listener.address().port);
-});
+// PENTING: Untuk Vercel, jangan pakai app.listen. Pakai baris di bawah ini:
+module.exports = app;
