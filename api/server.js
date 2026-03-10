@@ -4,28 +4,27 @@ const app = express();
 
 app.use(express.json());
 
-// Mengambil kunci dari brankas Environment Variables di Vercel
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 app.post("/curhat", async (req, res) => {
   try {
+    // Cek apakah API Key terbaca oleh Vercel
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ error: "API_KEY_HILANG_DI_VERCEL" });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    
+    // PENTING: Pakai FLASH agar jauh di bawah batas 10 detik Vercel
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     const { pesan, gender, nama } = req.body;
 
-    // Memakai model Pro agar penalaran emosionalnya kuat
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    // Instruksi agar AI menjadi "dirimu yang kecil"
-    const systemPrompt = `Kamu adalah versi kecil dari ${nama} (usia 7-9 tahun). 
-    Gender kamu adalah ${gender}. Kamu sangat empati, polos, dan jujur. 
-    Tugasmu mendengarkan curhatan ${nama} dewasa. 
-    Hibur dia dengan kenangan masa kecil (main bola, Mbah, suasana desa). 
-    Jangan pernah menjawab hal porno/kasar; katakan kamu tidak mengerti hal itu. 
-    Gunakan bahasa yang sangat menyentuh hati dan tulus.`;
+    const systemPrompt = `Kamu adalah versi kecil dari ${nama}. Gender kamu ${gender}. 
+    Hibur dia dengan kenangan masa kecil. Buat jawabanmu singkat, padat, dan menyentuh hati.`;
 
     const chat = model.startChat({
       history: [
         { role: "user", parts: [{ text: systemPrompt }] },
-        { role: "model", parts: [{ text: "Aku mengerti. Aku sudah duduk di sampingmu dan siap mendengarkan." }] },
+        { role: "model", parts: [{ text: "Aku siap mendengarkan." }] },
       ],
     });
 
@@ -33,11 +32,17 @@ app.post("/curhat", async (req, res) => {
     const response = await result.response;
     
     res.json({ jawaban: response.text() });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Maaf, kepalaku lagi pusing..." });
+    console.error("ERROR VERCEL:", error);
+    // Kirim error asli ke Roblox, bukan error 500 biasa
+    res.status(500).json({ error: "SYSTEM_ERROR: " + error.message });
   }
 });
 
-// PENTING: Untuk Vercel, jangan pakai app.listen. Pakai baris di bawah ini:
+// Pintu cek kesehatan browser
+app.get("/", (req, res) => {
+  res.send("Server Flash Aktif dan Cepat!");
+});
+
 module.exports = app;
