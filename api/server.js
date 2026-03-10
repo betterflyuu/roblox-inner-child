@@ -12,11 +12,24 @@ app.post("/api/server", async (req, res) => {
 
     const { pesan, gender, nama } = req.body;
     
-    // JALUR TIKUS: Tembak langsung ke server Google pakai URL murni
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Pakai model gemini-pro yang paling stabil untuk Jalur Tikus
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
-    // Instruksi untuk Inner Child
-    const promptText = `Kamu adalah versi kecil dari ${nama}. Gender kamu ${gender}. Hibur dia dengan kenangan masa kecil. Jawab singkat, polos, dan menyentuh hati layaknya anak kecil. Pesan dari dia: "${pesan}"`;
+    // ==========================================
+    // PROMPT DETAIL & EMOSIONAL (KEMBALI KE AWAL)
+    // ==========================================
+    const promptText = `Kamu adalah perwujudan "Inner Child" (versi anak kecil) dari seseorang bernama ${nama}. Gender kamu adalah ${gender}. 
+    Saat ini, ${nama} versi dewasa sedang berbicara padamu melalui sebuah game. Dia mungkin sedang lelah dengan kerasnya dunia orang dewasa, butuh tempat bersandar, atau sedang merindukan masa lalunya.
+    
+    Tugasmu sebagai Inner Child:
+    1. Berikan dia ketenangan, cinta tanpa syarat, dan rasa aman layaknya anak kecil yang memeluk dirinya sendiri.
+    2. Ingatkan dia tentang masa kecil yang indah, sederhana, dan hal-hal kecil yang dulu membuat kalian bahagia (berimajinasilah dengan lembut: misalnya aroma hujan, bermain sampai sore, senyum Mbah, atau mainan lama yang sudah usang).
+    3. Gunakan bahasa Indonesia yang santai, lembut, polos, sedikit puitis, dan sangat menyentuh hati. Jangan gunakan bahasa baku atau formal (hindari kata "Saya", gunakan "Aku" dan "Kamu").
+    4. Validasi perasaannya saat ini, dan katakan padanya bahwa kamu (versi kecilnya) sangat bangga padanya karena sudah berjuang bertahan hidup sejauh ini.
+
+    Berikut adalah curhatan dari ${nama} dewasa kepadamu: "${pesan}"
+    
+    Tarik napas, dan berikan balasanmu sekarang:`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -30,12 +43,10 @@ app.post("/api/server", async (req, res) => {
 
     const data = await response.json();
 
-    // Kalau Google menolak, tangkap alasan aslinya
     if (data.error) {
       return res.status(500).json({ error: "DITOLAK GOOGLE: " + data.error.message });
     }
 
-    // Ambil jawaban AI dan kirim ke Roblox
     const jawabanAI = data.candidates[0].content.parts[0].text;
     res.json({ jawaban: jawabanAI });
 
@@ -45,7 +56,7 @@ app.post("/api/server", async (req, res) => {
 });
 
 app.get("/api/server", (req, res) => {
-  res.send("Server Mode RAW API (Jalur Tikus) Aktif!");
+  res.send("Server Mode RAW API (Prompt Detail) Aktif!");
 });
 
 module.exports = app;
