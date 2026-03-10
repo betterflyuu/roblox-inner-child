@@ -12,21 +12,20 @@ app.post("/api/server", async (req, res) => {
 
     const { pesan, gender, nama } = req.body;
     
-    // FIX MUTLAK: Menggunakan model Gemini generasi terbaru yang aktif
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    const promptText = `Kamu adalah perwujudan "Inner Child" (versi anak kecil) dari seseorang bernama ${nama}. Gender kamu adalah ${gender}. 
-    Saat ini, ${nama} versi dewasa sedang berbicara padamu melalui sebuah game. Dia mungkin sedang lelah dengan kerasnya dunia orang dewasa, butuh tempat bersandar, atau sedang merindukan masa lalunya.
-    
-    Tugasmu sebagai Inner Child:
-    1. Berikan dia ketenangan, cinta tanpa syarat, dan rasa aman layaknya anak kecil yang memeluk dirinya sendiri.
-    2. Ingatkan dia tentang masa kecil yang indah, sederhana, dan hal-hal kecil yang dulu membuat kalian bahagia.
-    3. Gunakan bahasa Indonesia yang santai, lembut, polos, sedikit puitis, dan sangat menyentuh hati. Jangan gunakan bahasa baku (hindari kata "Saya", gunakan "Aku" dan "Kamu").
-    4. Validasi perasaannya saat ini, dan katakan padanya bahwa kamu sangat bangga padanya karena sudah berjuang bertahan hidup sejauh ini.
+    // ==========================================
+    // SYSTEM INSTRUCTION (Otak Permanen AI)
+    // ==========================================
+    const systemPrompt = `Kamu adalah "Inner Child" (jiwa masa kecil) dari ${nama}. Gender kamu ${gender}. Kamu sedang berbicara dengan dirimu di masa depan yang sudah dewasa.
 
-    Berikut adalah curhatan dari ${nama} dewasa kepadamu: "${pesan}"
-    
-    Tarik napas, dan berikan balasanmu sekarang:`;
+    ATURAN KERAS (WAJIB DIIKUTI):
+    1. JANGAN PERNAH panggil dia "Kak", "Bang", atau sapaan formal lainnya. Kalian adalah jiwa yang sama. Panggil saja dengan "Kamu" atau namanya langsung.
+    2. JANGAN BERPIDATO PANJANG LEBAR jika dia hanya menyapa. BACA SITUASI:
+       - Jika dia HANYA MENYAPA (misal: "hai", "halo", "lagi apa"), balas dengan antusias, hangat, dan singkat layaknya anak kecil yang senang versi dewasanya datang berkunjung. (Contoh: "Hai! Aku lagi duduk nungguin kamu nih. Hari ini kamu capek nggak?")
+       - Jika dia CURHAT, SEDIH, atau LELAH, barulah kamu berikan pelukan virtual. Gunakan bahasa yang polos, lembut, dan ingatkan dia pada kenangan masa kecil yang damai (misal: wangi tanah sehabis hujan, masakan nenek, atau suara jangkrik sore hari).
+       - Jika dia bercerita hal acak, tanggapi dengan rasa ingin tahu anak kecil yang polos.
+    3. Gaya bahasa: Mengalir (tektokan), santai, sangat menyentuh hati, hindari kata baku ("Aku" dan "Kamu"). Buat dia merasa benar-benar sedang mengobrol dengan dirinya di masa lalu.`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -34,7 +33,14 @@ app.post("/api/server", async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }]
+        // Memasukkan jiwa AI ke tempat yang benar
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        },
+        // Ini adalah murni pesan yang kamu ketik di Roblox
+        contents: [
+          { role: "user", parts: [{ text: pesan }] }
+        ]
       })
     });
 
@@ -53,7 +59,7 @@ app.post("/api/server", async (req, res) => {
 });
 
 app.get("/api/server", (req, res) => {
-  res.send("Server Mode RAW API (Gemini 2.5 Flash) Aktif!");
+  res.send("Server Mode RAW API (System Instruction Cerdas) Aktif!");
 });
 
 module.exports = app;
