@@ -4,16 +4,14 @@ const app = express();
 
 app.use(express.json());
 
-app.post("/curhat", async (req, res) => {
+// INI KUNCI FIX-NYA: Jalurnya disamakan persis dengan URL Vercel
+app.post("/api/server/curhat", async (req, res) => {
   try {
-    // Cek apakah API Key terbaca oleh Vercel
     if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: "API_KEY_HILANG_DI_VERCEL" });
+      return res.status(400).json({ error: "API KEY BLM DIPASANG DI VERCEL" });
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    
-    // PENTING: Pakai FLASH agar jauh di bawah batas 10 detik Vercel
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const { pesan, gender, nama } = req.body;
@@ -35,14 +33,13 @@ app.post("/curhat", async (req, res) => {
 
   } catch (error) {
     console.error("ERROR VERCEL:", error);
-    // Kirim error asli ke Roblox, bukan error 500 biasa
     res.status(500).json({ error: "SYSTEM_ERROR: " + error.message });
   }
 });
 
-// Pintu cek kesehatan browser
-app.get("/", (req, res) => {
-  res.send("Server Flash Aktif dan Cepat!");
+// Pintu tamu buat ngetes di Chrome
+app.get("/api/server/curhat", (req, res) => {
+  res.send("Jalur Vercel sudah SINKRON dan server AKTIF!");
 });
 
 module.exports = app;
